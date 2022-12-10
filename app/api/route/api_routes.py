@@ -84,8 +84,17 @@ def noSavedSelection():
         output = mymodelschema.dump(ocrDatasId)
         return jsonify(output)
     else:
-        return jsonify(message="Photo was not found for id: " + str(id)), 404
+        return jsonify(message="No ocr data was not found with no saved selection."  ), 404
 
+@api.route('/photo/missingdata', methods=['GET'])
+def photo_missingdata():
+    photos = Photo.query.filter((Photo.casetteNums==None) |  ( Photo.pagenum==None) | ((Photo.pagenum > 1) & (Photo.pageOne == None)))
+    if photos:
+        mymodelschema = PhotoSchema(many=True, only=['id'])
+        output = mymodelschema.dump(photos)
+        return jsonify(output)
+    else:
+        return jsonify(message="No photo ids was not found with missing data. " ), 404
 
 
 @api.route('/add_photo', methods=['POST'])
