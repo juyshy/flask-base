@@ -5,7 +5,7 @@ from .. import db
 class Book(db.Model):
     __tablename__ = 'books'
     book_id = Column(Integer, primary_key=True)
-    book_type = Column(String)
-    language = Column(String)
-    name = Column(String)
+    book_type = Column(String(100))
+    language = Column(String(30))
+    name = Column(String(50))
 
