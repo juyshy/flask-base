@@ -47,3 +47,4 @@ Werkzeug==2.2.2
 WTForms==3.0.1
 WTForms-SQLAlchemy==0.3
 zipp==3.11.0
+mysqlclient==1.4.6
