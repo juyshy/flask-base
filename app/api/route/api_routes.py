@@ -96,3 +96,52 @@ def add_photo():
     db.session.commit()
     return jsonify(message="Photo added"), 201
 
+
+@api.route('/update_photo/<int:id>', methods=['PUT'])
+#@jwt_required()
+@csrf.exempt
+def update_photo(id: int):
+    photo = Photo.query.filter_by(id = id).first()
+    if photo:
+        photo.updated_at = datetime.now()
+        #photo.user_id =  #
+
+        if 'notes' in  request.json:
+            photo.notes = request.json['notes']
+        if 'pagenum' in  request.json:
+            photo.pagenum = request.json['pagenum']
+        if 'pageOne' in  request.json:
+            photo.pageOne = request.json['pageOne']
+        if 'aml' in  request.json:
+            photo.aml = request.json['aml']
+        if 'name' in  request.json:
+            photo.name = request.json['name']
+        if 'filePath' in  request.json:
+            photo.filePath = request.json['filePath']
+        if 'casetteNums' in  request.json:
+            photo.casetteNums = request.json['casetteNums']
+        if 'notes' in  request.json:
+            photo.notes = request.json['notes']
+        if 'taken' in  request.json:
+            photo.taken = request.json['taken']
+        if 'rotation' in  request.json:
+            photo.rotation = request.json['rotation']
+        db.session.commit()
+        return jsonify(message="Photo data was updated"), 202
+    else:
+        return jsonify(message="Photo was not found."), 404
+
+
+
+@api.route('/delete_photo/<int:id>', methods=['DELETE'])
+#@jwt_required()
+@csrf.exempt
+def delete_photo(id: int):
+    photo = Photo.query.filter_by(id=id).first()
+    if photo:
+        db.session.delete(photo)
+        db.session.commit()
+        return jsonify(message="Photo was deleted"), 202
+    else:
+        return jsonify(message="Photo was not found."), 404
+
