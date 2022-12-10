@@ -32,6 +32,7 @@ def welcome():
 
 
 @api.route('/books')
+@jwt_required()
 def super_simple():
     books_list = Book.query.all()
     result = books_schema.dump(books_list)
@@ -43,6 +44,7 @@ photos_schema = PhotoSchema(many=True)
 
 @api.route('/photo', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def photo_list():
     page = int(request.args.get('page'))
     perPage = int(request.args.get('perPage'))
@@ -58,6 +60,7 @@ def photo_list():
 
 @api.route('/photo/<int:photo_id>', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def photo(photo_id: int):
     photo = Photo.query.filter_by(id=photo_id).first()
     if photo:
@@ -70,6 +73,7 @@ def photo(photo_id: int):
 
 @api.route('/ocrdata/<int:id>', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def ocrdata(id: int):
     photo = Photo.query.filter_by(id=id).first()
     ocr_data = OcrData.query.filter_by(photo_id=photo.id).first()
@@ -83,6 +87,7 @@ def ocrdata(id: int):
 @api.route('/ocrdata', methods=['POST'])
 @cross_origin()
 @csrf.exempt
+@jwt_required()
 def ocrdata_edit():
     id= request.json['id'] if 'id' in request.json else None
     ocrData = OcrData.query.filter_by(id=id).first()
@@ -106,6 +111,7 @@ def ocrdata_edit():
 @api.route('/ocrdata/<int:id>', methods=['PATCH'])
 @cross_origin()
 @csrf.exempt
+@jwt_required()
 def ocrdata_patch_saveselection(id: int):
     ocrData = OcrData.query.filter_by(id=id).first()
     saved_selection = request.json['saved_selection']
@@ -125,6 +131,7 @@ def ocrdata_patch_saveselection(id: int):
 @api.route('/photo/<int:id>', methods=['PATCH'])
 @cross_origin()
 @csrf.exempt
+@jwt_required()
 def phto_update(id: int):
     photo = Photo.query.filter_by(id=id).first()
     if photo:
@@ -154,6 +161,7 @@ def phto_update(id: int):
 
 @api.route('/ocrdata/nosavedselection', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def noSavedSelection():
     ocrDatasId = OcrData.query.filter_by(saved_selection=None)
     if ocrDatasId:
@@ -166,6 +174,7 @@ def noSavedSelection():
 
 @api.route('/ocrdata/latest', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def latest_ocrdata():
     #ocrDatasId= DB::table('ocr_data').select('id', 'photo_id').whereRaw('saved_selection is not NULL').orderBy('id','desc').limit(1).get()
     ocrDatasId = OcrData.query.filter(OcrData.saved_selection!=None).order_by(OcrData.id.desc()).limit(1).all()
@@ -178,6 +187,7 @@ def latest_ocrdata():
 
 @api.route('/photo/missingdata', methods=['GET'])
 @cross_origin()
+@jwt_required()
 def photo_missingdata():
     photos = Photo.query.filter((Photo.casetteNums==None) |  ( Photo.pagenum==None) | ((Photo.pagenum > 1) & (Photo.pageOne == None)))
     if photos:
@@ -240,7 +250,7 @@ def add_photo():
 
 @api.route('/update_photo/<int:id>', methods=['PUT'])
 @cross_origin()
-#@jwt_required()
+@jwt_required()
 @csrf.exempt
 def update_photo(id: int):
     photo = Photo.query.filter_by(id = id).first()
@@ -276,7 +286,7 @@ def update_photo(id: int):
 
 
 @api.route('/delete_photo/<int:id>', methods=['DELETE'])
-#@jwt_required()
+@jwt_required()
 @csrf.exempt
 def delete_photo(id: int):
     photo = Photo.query.filter_by(id=id).first()
