@@ -9,6 +9,7 @@ from app.schema.photo import PhotoSchema
 from app.schema.ocr_data import OcrDataSchema
 from app.schema.welcome import WelcomeSchema
 from flask_jwt_extended import jwt_required
+from flask_cors import cross_origin
 
 from  datetime import datetime
 api = Blueprint('api', __name__)
@@ -41,6 +42,7 @@ photo_schema = PhotoSchema()
 photos_schema = PhotoSchema(many=True)
 
 @api.route('/photo', methods=['GET'])
+@cross_origin()
 def photo_list():
     page = int(request.args.get('page'))
     perPage = int(request.args.get('perPage'))
@@ -49,12 +51,13 @@ def photo_list():
     else:
         photos_list = Photo.query.paginate(page=page, per_page= perPage)
         result = photos_schema.dump(photos_list.items)
-        return jsonify(result)
+        return jsonify({"current_page": page, "data":result})
 
 
 
 
 @api.route('/photo/<int:photo_id>', methods=['GET'])
+@cross_origin()
 def photo(photo_id: int):
     photo = Photo.query.filter_by(id=photo_id).first()
     if photo:
@@ -66,8 +69,10 @@ def photo(photo_id: int):
 
 
 @api.route('/ocrdata/<int:id>', methods=['GET'])
+@cross_origin()
 def ocrdata(id: int):
-    ocr_data = OcrData.query.filter_by(id=id).first()
+    photo = Photo.query.filter_by(id=id).first()
+    ocr_data = OcrData.query.filter_by(photo_id=photo.id).first()
     if ocr_data:
         result = ocr_data_schema.dump(ocr_data)
         return jsonify(result)
@@ -76,7 +81,8 @@ def ocrdata(id: int):
 
 
 
-@api.route('/nosavedselection', methods=['GET'])
+@api.route('/ocrdata/nosavedselection', methods=['GET'])
+@cross_origin()
 def noSavedSelection():
     ocrDatasId = OcrData.query.filter_by(saved_selection=None)
     if ocrDatasId:
@@ -87,6 +93,7 @@ def noSavedSelection():
         return jsonify(message="No ocr data was not found with no saved selection."  ), 404
 
 @api.route('/photo/missingdata', methods=['GET'])
+@cross_origin()
 def photo_missingdata():
     photos = Photo.query.filter((Photo.casetteNums==None) |  ( Photo.pagenum==None) | ((Photo.pagenum > 1) & (Photo.pageOne == None)))
     if photos:
@@ -97,6 +104,7 @@ def photo_missingdata():
         return jsonify(message="No photo ids was not found with missing data. " ), 404
 
 @api.route('/photo/missingAllMetadata', methods=['GET'])
+@cross_origin()
 def missingAllMetadata():
     photos = Photo.query.filter((Photo.casetteNums==None) & ( Photo.pagenum==None) & (Photo.pageOne==None) & (Photo.notes == None))
     if photos:
@@ -108,6 +116,7 @@ def missingAllMetadata():
 
 
 @api.route('/add_photo', methods=['POST'])
+@cross_origin()
 @jwt_required()
 @csrf.exempt # todo: remove this
 def add_photo():
@@ -146,6 +155,7 @@ def add_photo():
 
 
 @api.route('/update_photo/<int:id>', methods=['PUT'])
+@cross_origin()
 #@jwt_required()
 @csrf.exempt
 def update_photo(id: int):
