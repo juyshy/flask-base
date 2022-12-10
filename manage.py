@@ -10,6 +10,7 @@ from rq import Connection, Queue, Worker
 from app import create_app, db
 from app.models import Role, User, Book
 from app.models.photo import Photo
+from app.models.ocr_data import OcrData
 from config import Config
 
 from datetime import datetime

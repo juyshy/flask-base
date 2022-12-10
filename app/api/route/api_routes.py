@@ -3,8 +3,10 @@ from flask import Blueprint, jsonify, request
 from app.api.model.welcome import WelcomeModel
 from app.models.book import Book
 from app.models.photo import Photo
+from app.models.ocr_data import OcrData
 from app.schema.book import BookSchema
 from app.schema.photo import PhotoSchema
+from app.schema.ocr_data import OcrDataSchema
 from app.schema.welcome import WelcomeSchema
 from flask_jwt_extended import jwt_required
 
@@ -12,6 +14,8 @@ from  datetime import datetime
 api = Blueprint('api', __name__)
 
 books_schema = BookSchema(many=True)
+ocr_data_schema = OcrDataSchema()
+ocr_datas_schema = OcrDataSchema(many=True)
 
 from app import db, csrf
 
@@ -58,6 +62,17 @@ def photo(photo_id: int):
         return jsonify(result)
     else:
         return jsonify(message="Photo was not found for id: " + str(photo_id)), 404
+
+
+
+@api.route('/ocrdata/<int:id>', methods=['GET'])
+def ocrdata(id: int):
+    ocr_data = OcrData.query.filter_by(id=id).first()
+    if ocr_data:
+        result = ocr_data_schema.dump(ocr_data)
+        return jsonify(result)
+    else:
+        return jsonify(message="Photo was not found for id: " + str(id)), 404
 
 
 
