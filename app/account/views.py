@@ -15,6 +15,9 @@ from flask_login import (
 )
 from app import  csrf
 from flask_rq2 import RQ
+
+from app.schema.user import UserSchema
+
 get_queue = RQ().get_queue
 
 from app import db
@@ -63,7 +66,9 @@ def api_login():
     #user = User.query.filter_by(email=email, password=password).first()
     if user is not None and user.password_hash is not None and  user.verify_password(password):
         access_token = create_access_token(identity=email)
-        return jsonify(message="Login succeeded", access_token=access_token)
+        user_schema= UserSchema()
+        user_data = user_schema.dump(user)
+        return jsonify(message="Login succeeded", access_token=access_token, user=user_data)
     else:
         return jsonify(message="bad email or password"), 401
 
