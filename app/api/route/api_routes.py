@@ -88,7 +88,7 @@ def ocrdata_patch_saveselection(id: int):
     saved_selection = request.json['saved_selection']
     user_id = request.json['user_id']
 
-    # $user_id = $request->user_id; !!!! TODO
+    # user_id = request.user_id !!!! TODO
     if saved_selection:
         ocrData.saved_selection = saved_selection
         ocrData.user_id = user_id
@@ -97,6 +97,36 @@ def ocrdata_patch_saveselection(id: int):
     else:
         return 'nothing to update'
 
+
+
+@api.route('/photo/<int:id>', methods=['PATCH'])
+@cross_origin()
+@csrf.exempt
+def phto_update(id: int):
+    photo = Photo.query.filter_by(id=id).first()
+    if photo:
+        notes = request.json['notes'] if 'notes' in request.json else None
+        casetteNums = request.json['casetteNums'] if 'casetteNums' in  request.json else None
+        pageOne = request.json['pageOne'] if 'pageOne' in  request.json else None
+        pagenum = request.json['pagenum'] if 'pagenum' in  request.json else None
+        rotation = request.json['rotation'] if 'rotation' in  request.json else None
+        user_id = request.json['user_id'] if 'user_id' in  request.json else None
+
+        photo.user_id = user_id
+        photo.pagenum = pagenum
+        photo.pageOne = pageOne
+        #
+        if rotation:
+            photo.rotation = rotation
+        if notes != None:
+            photo.notes = notes
+
+        if casetteNums:
+            photo.casetteNums = casetteNums
+        db.session.commit()
+        result = photo_schema.dump(photo)
+        return jsonify(result)
+    return jsonify(message="Photo not found"), 404
 
 
 @api.route('/ocrdata/nosavedselection', methods=['GET'])
@@ -114,7 +144,7 @@ def noSavedSelection():
 @api.route('/ocrdata/latest', methods=['GET'])
 @cross_origin()
 def latest_ocrdata():
-    #$ocrDatasId= DB::table('ocr_data')->select('id', 'photo_id')->whereRaw('saved_selection is not NULL')->orderBy('id','desc')->limit(1)->get();
+    #ocrDatasId= DB::table('ocr_data').select('id', 'photo_id').whereRaw('saved_selection is not NULL').orderBy('id','desc').limit(1).get()
     ocrDatasId = OcrData.query.filter(OcrData.saved_selection!=None).order_by(OcrData.id.desc()).limit(1).all()
     if ocrDatasId:
         mymodelschema = OcrDataSchema(many=True, only=['id','photo_id'])
