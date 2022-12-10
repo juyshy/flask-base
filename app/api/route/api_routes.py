@@ -76,6 +76,18 @@ def ocrdata(id: int):
 
 
 
+@api.route('/nosavedselection', methods=['GET'])
+def noSavedSelection():
+    ocrDatasId = OcrData.query.filter_by(saved_selection=None)
+    if ocrDatasId:
+        mymodelschema = OcrDataSchema(many=True, only=['id','photo_id'])
+        output = mymodelschema.dump(ocrDatasId)
+        return jsonify(output)
+    else:
+        return jsonify(message="Photo was not found for id: " + str(id)), 404
+
+
+
 @api.route('/add_photo', methods=['POST'])
 @jwt_required()
 @csrf.exempt # todo: remove this
