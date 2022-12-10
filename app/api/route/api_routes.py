@@ -6,7 +6,7 @@ from app.models.photo import Photo
 from app.schema.book import BookSchema
 from app.schema.photo import PhotoSchema
 from app.schema.welcome import WelcomeSchema
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+from flask_jwt_extended import jwt_required
 
 from  datetime import datetime
 api = Blueprint('api', __name__)
@@ -62,7 +62,7 @@ def photo(photo_id: int):
 
 
 @api.route('/add_photo', methods=['POST'])
-#@jwt_required()
+@jwt_required()
 @csrf.exempt # todo: remove this
 def add_photo():
     id = request.json['id']

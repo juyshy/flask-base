@@ -16,3 +16,4 @@ dist
 dump.rdb
 .vscode/
 .history/
+data-dev.sqlite.sql

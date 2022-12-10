@@ -8,7 +8,7 @@ from flask_mail import Mail
 from flask_rq2 import RQ
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
-
+from flask_jwt_extended import JWTManager
 from app.assets import app_css, app_js, vendor_css, vendor_js
 from config import config as Config
 
@@ -19,6 +19,7 @@ mail = Mail()
 db = SQLAlchemy()
 csrf = CSRFProtect()
 compress = Compress()
+jwt = JWTManager()
 
 # Set up Flask-Login
 login_manager = LoginManager()
@@ -45,6 +46,7 @@ def create_app(config):
     login_manager.init_app(app)
     csrf.init_app(app)
     compress.init_app(app)
+    jwt.init_app(app)
     RQ(app)
 
     # Register Jinja template functions
