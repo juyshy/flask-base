@@ -80,6 +80,24 @@ def ocrdata(id: int):
         return jsonify(message="Photo was not found for id: " + str(id)), 404
 
 
+@api.route('/ocrdata/<int:id>', methods=['PATCH'])
+@cross_origin()
+@csrf.exempt
+def ocrdata_patch_saveselection(id: int):
+    ocrData = OcrData.query.filter_by(id=id).first()
+    saved_selection = request.json['saved_selection']
+    user_id = request.json['user_id']
+
+    # $user_id = $request->user_id; !!!! TODO
+    if saved_selection:
+        ocrData.saved_selection = saved_selection
+        ocrData.user_id = user_id
+        db.session.commit()
+        return 'ocrdata updated'
+    else:
+        return 'nothing to update'
+
+
 
 @api.route('/ocrdata/nosavedselection', methods=['GET'])
 @cross_origin()
@@ -91,6 +109,19 @@ def noSavedSelection():
         return jsonify(output)
     else:
         return jsonify(message="No ocr data was not found with no saved selection."  ), 404
+
+
+@api.route('/ocrdata/latest', methods=['GET'])
+@cross_origin()
+def latest_ocrdata():
+    #$ocrDatasId= DB::table('ocr_data')->select('id', 'photo_id')->whereRaw('saved_selection is not NULL')->orderBy('id','desc')->limit(1)->get();
+    ocrDatasId = OcrData.query.filter(OcrData.saved_selection!=None).order_by(OcrData.id.desc()).limit(1).all()
+    if ocrDatasId:
+        mymodelschema = OcrDataSchema(many=True, only=['id','photo_id'])
+        output = mymodelschema.dump(ocrDatasId)
+        return jsonify(output)
+    else:
+        return jsonify(message="No ocr data was not found."  ), 404
 
 @api.route('/photo/missingdata', methods=['GET'])
 @cross_origin()
