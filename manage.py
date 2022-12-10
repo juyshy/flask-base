@@ -54,19 +54,6 @@ def db_seed():
     db.session.add(book1)
     db.session.add(book2)
 
-    photo = Photo(id=666, name="20210526_173717",
-                  filePath="20210526_173717.jpg",
-                  taken=datetime.strptime("2021-05-26 17:37:17", '%Y-%m-%d %H:%M:%S'),
-                  created_at=datetime.strptime("2021-07-25T19:03:36", '%Y-%m-%dT%H:%M:%S'),
-                  updated_at=datetime.strptime("2022-08-15T09:53:47", '%Y-%m-%dT%H:%M:%S'),
-                  casetteNums="499, 500,501",
-                  notes=None,
-                  user_id=2,
-                  pagenum=1,
-                  pageOne=None,
-                  aml=None,
-                  rotation=None)
-    db.session.add(photo)
     db.session.commit()
     print("database data initialized")
 
@@ -108,7 +95,9 @@ def setup_general():
                 last_name='Account',
                 password=Config.ADMIN_PASSWORD,
                 confirmed=True,
-                email=Config.ADMIN_EMAIL)
+                email=Config.ADMIN_EMAIL,
+                created_at=datetime.now(),
+                updated_at=datetime.now())
             db.session.add(user)
             db.session.commit()
             print('Added administrator {}'.format(user.full_name()))
