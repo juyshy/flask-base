@@ -6,6 +6,8 @@ from app.models.photo import Photo
 from app.schema.book import BookSchema
 from app.schema.photo import PhotoSchema
 from app.schema.welcome import WelcomeSchema
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token
+
 from  datetime import datetime
 api = Blueprint('api', __name__)
 
