@@ -8,7 +8,7 @@ from redis import Redis
 from rq import Connection, Queue, Worker
 
 from app import create_app, db
-from app.models import Role, User
+from app.models import Role, User, Book
 from config import Config
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -44,6 +44,14 @@ def recreate_db():
     db.create_all()
     db.session.commit()
 
+@manager.command
+def db_seed():
+    book1 = Book(book_type="copyfolder", language="EN", name="Sl lib")
+    book2 = Book(book_type="book", language="FI", name="Paljastetut mysteerit")
+    db.session.add(book1)
+    db.session.add(book2)
+    db.session.commit()
+    print("database data initialized")
 
 @manager.option(
     '-n',

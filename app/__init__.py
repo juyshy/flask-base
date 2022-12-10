@@ -12,6 +12,8 @@ from flask_wtf import CSRFProtect
 from app.assets import app_css, app_js, vendor_css, vendor_js
 from config import config as Config
 
+from app.api.route.home import home_api
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 mail = Mail()
@@ -76,5 +78,7 @@ def create_app(config):
 
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
+
+    app.register_blueprint(home_api, url_prefix='/api')
 
     return app
