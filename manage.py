@@ -9,7 +9,10 @@ from rq import Connection, Queue, Worker
 
 from app import create_app, db
 from app.models import Role, User, Book
+from app.models.photo import Photo
 from config import Config
+
+from datetime import datetime
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
@@ -50,6 +53,20 @@ def db_seed():
     book2 = Book(book_type="book", language="FI", name="Paljastetut mysteerit")
     db.session.add(book1)
     db.session.add(book2)
+
+    photo = Photo(id=666, name="20210526_173717",
+                  filePath="20210526_173717.jpg",
+                  taken=datetime.strptime("2021-05-26 17:37:17", '%Y-%m-%d %H:%M:%S'),
+                  created_at=datetime.strptime("2021-07-25T19:03:36", '%Y-%m-%dT%H:%M:%S'),
+                  updated_at=datetime.strptime("2022-08-15T09:53:47", '%Y-%m-%dT%H:%M:%S'),
+                  casetteNums="499, 500,501",
+                  notes=None,
+                  user_id=2,
+                  pagenum=1,
+                  pageOne=None,
+                  aml=None,
+                  rotation=None)
+    db.session.add(photo)
     db.session.commit()
     print("database data initialized")
 
