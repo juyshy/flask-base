@@ -80,6 +80,29 @@ def ocrdata(id: int):
         return jsonify(message="Photo was not found for id: " + str(id)), 404
 
 
+@api.route('/ocrdata', methods=['POST'])
+@cross_origin()
+@csrf.exempt
+def ocrdata_edit():
+    id= request.json['id'] if 'id' in request.json else None
+    ocrData = OcrData.query.filter_by(id=id).first()
+    if ocrData:
+        hocr_edited = request.json['hocr_edited'] if 'hocr_edited' in request.json else None
+        user_id = request.json['user_id'] if 'user_id' in request.json else None
+        if hocr_edited:
+            ocrData.hocr_edited = hocr_edited
+            ocrData.user_id = user_id
+            db.session.commit()
+            return jsonify(message="ocr data edited"), 200
+        else:
+            return jsonify(message="no ocr data edited"), 401
+    return jsonify(message="Ocr data not found"), 404
+
+# ocrData.save()
+# return 'saved edited horc for image '.ocrData.id.
+# ' '.hocr_edited
+#     
+
 @api.route('/ocrdata/<int:id>', methods=['PATCH'])
 @cross_origin()
 @csrf.exempt
