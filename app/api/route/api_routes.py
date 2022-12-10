@@ -96,6 +96,16 @@ def photo_missingdata():
     else:
         return jsonify(message="No photo ids was not found with missing data. " ), 404
 
+@api.route('/photo/missingAllMetadata', methods=['GET'])
+def missingAllMetadata():
+    photos = Photo.query.filter((Photo.casetteNums==None) & ( Photo.pagenum==None) & (Photo.pageOne==None) & (Photo.notes == None))
+    if photos:
+        mymodelschema = PhotoSchema(many=True, only=['id'])
+        output = mymodelschema.dump(photos)
+        return jsonify(output)
+    else:
+        return jsonify(message="No photo ids was not found with missing data. " ), 404
+
 
 @api.route('/add_photo', methods=['POST'])
 @jwt_required()
