@@ -9,7 +9,7 @@ from flask_rq2 import RQ
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from app.assets import app_css, app_js, vendor_css, vendor_js
 from config import config as Config
@@ -27,7 +27,7 @@ cors = CORS()
 # Set up Flask-Login
 login_manager = LoginManager()
 login_manager.session_protection = 'basic'
-login_manager.login_view = 'account.login'
+#login_manager.login_view = 'account.login'
 
 
 def create_app(config):
